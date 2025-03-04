@@ -1,0 +1,149 @@
+package wingetcfg
+
+import "errors"
+
+const (
+	RegistryValueTypeString       string = "String"
+	RegistryValueTypeBinary       string = "Binary"
+	RegistryValueTypeDWord        string = "DWord"
+	RegistryValueTypeQWord        string = "QWord"
+	RegistryValueTypeMultistring  string = "Multistring"
+	RegistryValueTypeExpandString string = "ExpandString"
+)
+
+// RemoveRegistryKey adds a registry key.
+// ID is an optional identifier.
+// Description is an optional text that describes the task to be performed.
+// Key specifies the path to the registry key as a string. This path must include the registry hive or drive, such as HKEY_LOCAL_MACHINE or HKLM:.
+// force specifies if you want to delete a registry key that has subkeys.
+func AddRegistryKey(ID string, description string, key string, force bool) (*WinGetResource, error) {
+	return NewWinGetRegistryResource(ID, description, key, "", "", []string{""}, EnsurePresent, false, force)
+}
+
+// AddRegistryKeyDefaultValue updates a registry key default value.
+// ID is an optional identifier.
+// Description is an optional text that describes the task to be performed.
+// Key specifies the path to the registry key as a string. This path must include the registry hive or drive, such as HKEY_LOCAL_MACHINE or HKLM:.
+// valueType specifies the type for the specified registry key value's data which is one of String, Binary, DWord, QWord, MultiString, ExpandString
+// valueData specifies the registry key value as an array of string. If ValueType isn't MultiString and this property's value is multiple strings,
+// force specifies if you want to delete a registry key that has subkeys.
+func UpdateRegistryKeyDefaultValue(ID string, description string, key string, valueType string, valueData []string, force bool) (*WinGetResource, error) {
+	return NewWinGetRegistryResource(ID, description, key, "", valueType, valueData, EnsurePresent, false, force)
+}
+
+// AddRegistryValue creates a new WinGetResource that contains the settings to add a new registry value.
+// Key specifies the path to the registry key as a string. This path must include the registry hive or drive, such as HKEY_LOCAL_MACHINE or HKLM:.
+// valueName specifies the name of the registry value as a string.
+// valueType specifies the type for the specified registry key value's data which is one of String, Binary, DWord, QWord, MultiString, ExpandString.
+// valueData specifies the registry key value as an array of string. If ValueType isn't MultiString and this property's value is multiple strings,
+// the function returns an invalid argument exception.
+// ensure specifies whether the registry key or value should exist. To add or update a registry key or value, set this property to Present. To remove
+// a registry key or value, set this property to Absent.
+// hex specifies whether the specified registry key data is provided in a hexadecimal format. Specify this property only when valueType is DWord or QWord.
+// If valueType isn't DWord or Qword, the resource ignores this property.
+// force specifies if you want to delete a registry key that has subkeys.
+func AddRegistryValue(ID string, description string, key string, valueName string, valueType string, valueData []string, hex bool, force bool) (*WinGetResource, error) {
+	return NewWinGetRegistryResource(ID, description, key, valueName, valueType, valueData, EnsurePresent, false, force)
+}
+
+// RemoveRegistryKey removes a registry key.
+// ID is an optional identifier.
+// Description is an optional text that describes the task to be performed.
+// Key specifies the path to the registry key as a string. This path must include the registry hive or drive, such as HKEY_LOCAL_MACHINE or HKLM:.
+// force specifies if you want to delete a registry key that has subkeys.
+func RemoveRegistryKey(ID string, description string, key string, force bool) (*WinGetResource, error) {
+	return NewWinGetRegistryResource(ID, description, key, "", "", []string{""}, EnsureAbsent, false, force)
+}
+
+// RemoveRegistryValue removes a registry value from a key.
+// ID is an optional identifier.
+// Description is an optional text that describes the task to be performed.
+// Key specifies the path to the registry key as a string. This path must include the registry hive or drive, such as HKEY_LOCAL_MACHINE or HKLM:.
+// valueName specifies the name of the registry value as a string.
+func RemoveRegistryValue(ID string, description string, key string, valueName string) (*WinGetResource, error) {
+	return NewWinGetRegistryResource(ID, description, key, valueName, "", []string{""}, EnsureAbsent, false, false)
+}
+
+// NewWinGetRegistryResource creates a new WinGetResource that contains the settings to modify the registry.
+// ID is an optional identifier.
+// Description is an optional text that describes the task to be performed.
+// Key specifies the path to the registry key as a string. This path must include the registry hive or drive, such as HKEY_LOCAL_MACHINE or HKLM:.
+// valueName specifies the name of the registry value as a string. To add or remove a registry key, specify this property as an empty string without
+// specifying the ValueType or ValueData property. To update or remove the default value of a registry key, specify this property as an empty string
+// with the ValueType or ValueData property.
+// valueType specifies the type for the specified registry key value's data which is one of String, Binary, DWord, QWord, MultiString, ExpandString
+// valueData specifies the registry key value as an array of string. If ValueType isn't MultiString and this property's value is multiple strings,
+// the function returns an invalid argument exception.
+// ensure specifies whether the registry key or value should exist. To add or update a registry key or value, set this property to Present. To remove
+// a registry key or value, set this property to Absent.
+// hex specifies whether the specified registry key data is provided in a hexadecimal format. Specify this property only when valueType is DWord or QWord.
+// If valueType isn't DWord or Qword, the resource ignores this property.
+// force specifies whether to overwrite the registry key value if it already has a value or to delete a registry key that has subkeys.
+// Reference: https://github.com/dsccommunity/xPSDesiredStateConfiguration/blob/main/source/DSCResources/DSC_xRegistryResource/DSC_xRegistryResource.psm1
+func NewWinGetRegistryResource(ID string, description string, key string, valueName string, valueType string, valueData []string, ensure string, hex bool, force bool) (*WinGetResource, error) {
+	r := WinGetResource{}
+	r.Resource = "xPSDesiredStateConfiguration/xRegistry"
+
+	// ID (optional)
+	if ID != "" {
+		r.ID = ID
+	}
+
+	// Directives
+	r.Directives.Description = description
+	r.Directives.AllowPreRelease = true
+
+	// Settings
+	r.Settings = map[string]any{}
+
+	if key == "" {
+		return nil, errors.New("key cannot be empty")
+	}
+	r.Settings["Key"] = key
+
+	r.Settings["ValueName"] = valueName
+
+	if !IsValidRegistryValueType(valueType) {
+		return nil, errors.New("value type is not valid")
+	}
+	r.Settings["ValueType"] = valueType
+
+	if len(valueData) == 0 {
+		return nil, errors.New("valueData is empty")
+	}
+
+	if valueType == RegistryValueTypeMultistring {
+		r.Settings["ValueData"] = valueData
+	} else {
+		if len(valueData) > 1 {
+			return nil, errors.New("more than one string has been passed but type is not Multistring")
+		}
+		r.Settings["ValueData"] = valueData[0]
+	}
+
+	r.Settings["Force"] = force
+
+	if valueType == RegistryValueTypeDWord || valueType == RegistryValueTypeQWord {
+		r.Settings["Hex"] = hex
+	}
+
+	r.Settings["Ensure"] = SetEnsureValue(ensure)
+
+	return &r, nil
+}
+
+func IsValidRegistryValueType(registryValueType string) bool {
+	switch registryValueType {
+	case "String", "Binary", "DWord", "QWord", "MultiString", "ExpandString":
+		return true
+	}
+	return false
+}
+
+func SetEnsureValue(ensure string) string {
+	switch ensure {
+	case EnsurePresent, EnsureAbsent:
+		return ensure
+	}
+	return EnsurePresent
+}
