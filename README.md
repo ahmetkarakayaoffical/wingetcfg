@@ -1,4 +1,4 @@
-# Winget Configure Generator
+# Winget Configuration File Generator
 
 This repository contains a library that can help to create a WinGet configuration file following the guidelines described in [Microsoft's documentation](https://learn.microsoft.com/en-us/windows/package-manager/configuration/create)
 
