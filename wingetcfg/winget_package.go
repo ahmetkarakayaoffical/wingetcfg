@@ -2,6 +2,8 @@ package wingetcfg
 
 import "errors"
 
+const WinGetPackageResource = "Microsoft.WinGet.DSC/WinGetPackage"
+
 func InstallPackage(ID string, description string, packageID string, source string, version string, useLatest bool) (*WinGetResource, error) {
 	return NewWinGetPackageResource(ID, description, packageID, source, version, useLatest, true)
 }
@@ -13,7 +15,7 @@ func UninstallPackage(ID string, description string, packageID string, source st
 // Reference: https://github.com/microsoft/winget-cli/blob/master/src/PowerShell/Microsoft.WinGet.DSC/Microsoft.WinGet.DSC.psm1
 func NewWinGetPackageResource(ID string, description string, packageID string, source string, version string, useLatest bool, ensure bool) (*WinGetResource, error) {
 	r := WinGetResource{}
-	r.Resource = "Microsoft.WinGet.DSC/WinGetPackage"
+	r.Resource = WinGetPackage
 
 	// ID (optional)
 	if ID != "" {
