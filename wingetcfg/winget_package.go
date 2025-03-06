@@ -15,7 +15,7 @@ func UninstallPackage(ID string, description string, packageID string, source st
 // Reference: https://github.com/microsoft/winget-cli/blob/master/src/PowerShell/Microsoft.WinGet.DSC/Microsoft.WinGet.DSC.psm1
 func NewWinGetPackageResource(ID string, description string, packageID string, source string, version string, useLatest bool, ensure bool) (*WinGetResource, error) {
 	r := WinGetResource{}
-	r.Resource = WinGetPackage
+	r.Resource = WinGetPackageResource
 
 	// ID (optional)
 	if ID != "" {
