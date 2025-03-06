@@ -9,6 +9,7 @@ const (
 	RegistryValueTypeQWord        string = "QWord"
 	RegistryValueTypeMultistring  string = "Multistring"
 	RegistryValueTypeExpandString string = "ExpandString"
+	WinGetRegistryResource               = "xPSDesiredStateConfiguration/xRegistry"
 )
 
 // RemoveRegistryKey adds a registry key.
@@ -82,7 +83,7 @@ func RemoveRegistryValue(ID string, description string, key string, valueName st
 // Reference: https://github.com/dsccommunity/xPSDesiredStateConfiguration/blob/main/source/DSCResources/DSC_xRegistryResource/DSC_xRegistryResource.psm1
 func NewWinGetRegistryResource(ID string, description string, key string, valueName string, valueType string, valueData []string, ensure string, hex bool, force bool) (*WinGetResource, error) {
 	r := WinGetResource{}
-	r.Resource = "xPSDesiredStateConfiguration/xRegistry"
+	r.Resource = WinGetRegistryResource
 
 	// ID (optional)
 	if ID != "" {
