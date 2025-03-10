@@ -12,13 +12,13 @@ const (
 	WinGetRegistryResource               = "xPSDesiredStateConfiguration/xRegistry"
 )
 
-// RemoveRegistryKey adds a registry key.
+// AddRegistryKey adds a registry key.
 // ID is an optional identifier.
 // Description is an optional text that describes the task to be performed.
 // Key specifies the path to the registry key as a string. This path must include the registry hive or drive, such as HKEY_LOCAL_MACHINE or HKLM:.
 // force specifies if you want to delete a registry key that has subkeys.
-func AddRegistryKey(ID string, description string, key string, force bool) (*WinGetResource, error) {
-	return NewWinGetRegistryResource(ID, description, key, "", "", []string{""}, EnsurePresent, false, force)
+func AddRegistryKey(ID string, description string, key string) (*WinGetResource, error) {
+	return NewWinGetRegistryResource(ID, description, key, "", "", []string{""}, EnsurePresent, false, false)
 }
 
 // AddRegistryKeyDefaultValue updates a registry key default value.
@@ -28,8 +28,8 @@ func AddRegistryKey(ID string, description string, key string, force bool) (*Win
 // valueType specifies the type for the specified registry key value's data which is one of String, Binary, DWord, QWord, MultiString, ExpandString
 // valueData specifies the registry key value as an array of string. If ValueType isn't MultiString and this property's value is multiple strings,
 // force specifies if you want to delete a registry key that has subkeys.
-func UpdateRegistryKeyDefaultValue(ID string, description string, key string, valueType string, valueData []string, force bool) (*WinGetResource, error) {
-	return NewWinGetRegistryResource(ID, description, key, "", valueType, valueData, EnsurePresent, false, force)
+func UpdateRegistryKeyDefaultValue(ID string, description string, key string, valueType string, valueData []string) (*WinGetResource, error) {
+	return NewWinGetRegistryResource(ID, description, key, "", valueType, valueData, EnsurePresent, false, false)
 }
 
 // AddRegistryValue creates a new WinGetResource that contains the settings to add a new registry value.
