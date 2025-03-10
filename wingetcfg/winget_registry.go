@@ -121,10 +121,15 @@ func NewWinGetRegistryResource(ID string, description string, key string, valueN
 		if len(valueData) > 1 {
 			return nil, errors.New("more than one string has been passed but type is not Multistring")
 		}
-		r.Settings["ValueData"] = valueData[0]
+
+		if valueData[0] != "" {
+			r.Settings["ValueData"] = valueData[0]
+		}
 	}
 
-	r.Settings["Force"] = force
+	if force {
+		r.Settings["Force"] = force
+	}
 
 	if valueType == RegistryValueTypeDWord || valueType == RegistryValueTypeQWord {
 		r.Settings["Hex"] = hex
