@@ -28,8 +28,8 @@ func AddRegistryKey(ID string, description string, key string) (*WinGetResource,
 // valueType specifies the type for the specified registry key value's data which is one of String, Binary, DWord, QWord, MultiString, ExpandString
 // valueData specifies the registry key value as an array of string. If ValueType isn't MultiString and this property's value is multiple strings,
 // force specifies if you want to delete a registry key that has subkeys.
-func UpdateRegistryKeyDefaultValue(ID string, description string, key string, valueType string, valueData []string) (*WinGetResource, error) {
-	return NewWinGetRegistryResource(ID, description, key, "", valueType, valueData, EnsurePresent, false, false)
+func UpdateRegistryKeyDefaultValue(ID string, description string, key string, valueType string, valueData []string, force bool) (*WinGetResource, error) {
+	return NewWinGetRegistryResource(ID, description, key, "", valueType, valueData, EnsurePresent, false, force)
 }
 
 // AddRegistryValue creates a new WinGetResource that contains the settings to add a new registry value.
