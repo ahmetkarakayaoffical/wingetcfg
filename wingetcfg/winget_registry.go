@@ -104,10 +104,12 @@ func NewWinGetRegistryResource(ID string, description string, key string, valueN
 
 	r.Settings["ValueName"] = valueName
 
-	if !IsValidRegistryValueType(valueType) {
-		return nil, errors.New("value type is not valid")
+	if valueType != "" {
+		if !IsValidRegistryValueType(valueType) {
+			return nil, errors.New("value type is not valid")
+		}
+		r.Settings["ValueType"] = valueType
 	}
-	r.Settings["ValueType"] = valueType
 
 	if len(valueData) == 0 {
 		return nil, errors.New("valueData is empty")
