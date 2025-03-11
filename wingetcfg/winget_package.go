@@ -27,30 +27,30 @@ func NewWinGetPackageResource(ID string, description string, packageID string, s
 	r.Directives.AllowPreRelease = true
 
 	// Settings
-	r.Settings = Settings{}
+	r.Settings = map[string]any{}
 
 	if packageID == "" {
 		return nil, errors.New("packageID cannot be empty")
 	}
-	r.Settings.ID = packageID
+	r.Settings["id"] = packageID
 
 	if source != "" {
-		r.Settings.Source = source
+		r.Settings["source"] = source
 	} else {
-		r.Settings.Source = "winget"
+		r.Settings["source"] = "winget"
 	}
 
-	r.Settings.UseLatest = useLatest
+	r.Settings["uselatest"] = useLatest
 
 	if version != "" {
-		r.Settings.Version = version
-		r.Settings.UseLatest = false
+		r.Settings["version"] = version
+		r.Settings["uselatest"] = false
 	}
 
 	if ensure {
-		r.Settings.Ensure = "Present"
+		r.Settings["Ensure"] = "Present"
 	} else {
-		r.Settings.Ensure = "Absent"
+		r.Settings["Ensure"] = "Absent"
 	}
 
 	return &r, nil

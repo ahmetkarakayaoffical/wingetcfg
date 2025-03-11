@@ -2,6 +2,7 @@ package wingetcfg
 
 import (
 	"errors"
+	"strings"
 )
 
 const (
@@ -97,20 +98,20 @@ func NewWinGetRegistryResource(ID string, description string, key string, valueN
 	r.Directives.AllowPreRelease = true
 
 	// Settings
-	r.Settings = Settings{}
+	r.Settings = map[string]any{}
 
 	if key == "" {
 		return nil, errors.New("key cannot be empty")
 	}
-	r.Settings.Key = key
+	r.Settings["Key"] = key
 
-	r.Settings.ValueName = valueName
+	r.Settings["ValueName"] = valueName
 
 	if valueType != "" {
 		if !IsValidRegistryValueType(valueType) {
 			return nil, errors.New("value type is not valid")
 		}
-		r.Settings.ValueType = valueType
+		r.Settings["ValueType"] = valueType
 	}
 
 	if len(valueData) == 0 {
@@ -118,26 +119,26 @@ func NewWinGetRegistryResource(ID string, description string, key string, valueN
 	}
 
 	if valueType == RegistryValueTypeMultistring {
-		r.Settings.ValueData = valueData
+		r.Settings["ValueData"] = strings.Join(valueData, "\r\n")
 	} else {
 		if len(valueData) > 1 {
 			return nil, errors.New("more than one string has been passed but type is not Multitring")
 		}
 
 		if valueData[0] != "" {
-			r.Settings.ValueData = valueData
+			r.Settings["ValueData"] = valueData[0]
 		}
 	}
 
 	if force {
-		r.Settings.Force = force
+		r.Settings["Force"] = force
 	}
 
 	if valueType == RegistryValueTypeDWord || valueType == RegistryValueTypeQWord {
-		r.Settings.Hex = hex
+		r.Settings["Hex"] = hex
 	}
 
-	r.Settings.Ensure = SetEnsureValue(ensure)
+	r.Settings["Ensure"] = SetEnsureValue(ensure)
 
 	return &r, nil
 }
