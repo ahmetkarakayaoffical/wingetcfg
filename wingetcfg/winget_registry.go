@@ -2,7 +2,6 @@ package wingetcfg
 
 import (
 	"errors"
-	"strings"
 )
 
 const (
@@ -119,7 +118,7 @@ func NewWinGetRegistryResource(ID string, description string, key string, valueN
 	}
 
 	if valueType == RegistryValueTypeMultistring {
-		r.Settings["ValueData"] = strings.Join(valueData, "\r\n")
+		r.Settings["ValueData"] = valueData
 	} else {
 		if len(valueData) > 1 {
 			return nil, errors.New("more than one string has been passed but type is not Multitring")
