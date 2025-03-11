@@ -19,12 +19,26 @@ type WinGetDirectives struct {
 	AllowPreRelease bool   `yaml:"allowPrerelease"`
 }
 
+type Settings struct {
+	Ensure    string   `yaml:"Ensure"`
+	ID        string   `yaml:"id"`
+	Source    string   `yaml:"source"`
+	Version   string   `yaml:"version"`
+	UseLatest bool     `yaml:"uselatest"`
+	Key       string   `yaml:"Key"`
+	ValueName string   `yaml:"ValueName"`
+	ValueType string   `yaml:"ValueType"`
+	ValueData []string `yaml:"ValueData"`
+	Hex       bool     `yaml:"Hex"`
+	Force     bool     `yaml:"Bool"`
+}
+
 type WinGetResource struct {
 	Resource   string `yaml:"resource"`
 	ID         string `yaml:"id,omitempty"`
 	DependsOn  string `yaml:"dependsOn,omitempty"`
 	Directives WinGetDirectives
-	Settings   map[string]any `yaml:"settings,omitempty,flow"`
+	Settings   Settings
 }
 
 type WinGetProperties struct {
