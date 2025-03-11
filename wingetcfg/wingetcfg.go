@@ -24,7 +24,7 @@ type WinGetResource struct {
 	ID         string `yaml:"id,omitempty"`
 	DependsOn  string `yaml:"dependsOn,omitempty"`
 	Directives WinGetDirectives
-	Settings   map[string]any `yaml:"omitempty,flow"`
+	Settings   map[string]any `yaml:"settings,omitempty,flow"`
 }
 
 type WinGetProperties struct {
