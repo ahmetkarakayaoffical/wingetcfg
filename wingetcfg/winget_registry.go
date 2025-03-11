@@ -10,7 +10,7 @@ const (
 	RegistryValueTypeBinary       string = "Binary"
 	RegistryValueTypeDWord        string = "DWord"
 	RegistryValueTypeQWord        string = "QWord"
-	RegistryValueTypeMultistring  string = "Multistring"
+	RegistryValueTypeMultistring  string = "MultiString"
 	RegistryValueTypeExpandString string = "ExpandString"
 	WinGetRegistryResource               = "xPSDesiredStateConfiguration/xRegistry"
 )
@@ -122,7 +122,7 @@ func NewWinGetRegistryResource(ID string, description string, key string, valueN
 		r.Settings["ValueData"] = strings.Join(valueData, "\r\n")
 	} else {
 		if len(valueData) > 1 {
-			return nil, errors.New("more than one string has been passed but type is not Multistring")
+			return nil, errors.New("more than one string has been passed but type is not Multitring")
 		}
 
 		if valueData[0] != "" {
