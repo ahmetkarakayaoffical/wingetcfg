@@ -78,3 +78,11 @@ func (cfg *WinGetCfg) WriteConfigFile(filePath string) error {
 
 	return nil
 }
+
+func SetEnsureValue(ensure string) string {
+	switch ensure {
+	case EnsurePresent, EnsureAbsent:
+		return ensure
+	}
+	return EnsurePresent
+}

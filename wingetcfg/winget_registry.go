@@ -149,11 +149,3 @@ func IsValidRegistryValueType(registryValueType string) bool {
 	}
 	return false
 }
-
-func SetEnsureValue(ensure string) string {
-	switch ensure {
-	case EnsurePresent, EnsureAbsent:
-		return ensure
-	}
-	return EnsurePresent
-}
