@@ -143,7 +143,7 @@ func addHostnameToMembersIfRequired(members string, hostname string) []string {
 	splittedMembers := strings.Split(members, ";")
 	for _, m := range splittedMembers {
 		if !strings.Contains(m, "\\") && !strings.Contains(m, "@") && !strings.Contains(strings.ToLower(m), "dc") {
-			processed = append(processed, fmt.Sprintf("%s\\%s", hostname, m))
+			processed = append(processed, fmt.Sprintf("%s\\%s", strings.ToLower(hostname), m))
 		} else {
 			processed = append(processed, m)
 		}
