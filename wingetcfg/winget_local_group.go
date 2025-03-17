@@ -20,12 +20,18 @@ func AddOrModifyLocalGroup(ID, groupName string, description string, members str
 }
 
 // IncludeMembersToGroup adds or modify a local group.
+// ID is an optional identifier.
 // GroupName is required to identify the group.
 // MembersToInclude define the members that should be added to the group. Members should be specified as list of strings, separated by a semi-colon,
 // defining the local machine accounts usernames).
-func IncludeMembersToGroup(groupName string, membersToInclude string) (*WinGetResource, error) {
+func IncludeMembersToGroup(ID, groupName string, membersToInclude string) (*WinGetResource, error) {
 	r := WinGetResource{}
 	r.Resource = WinGetLocalGroupResource
+
+	// ID (optional)
+	if ID != "" {
+		r.ID = ID
+	}
 
 	// Directives
 	r.Directives.Description = "Include members to group"
@@ -50,12 +56,18 @@ func IncludeMembersToGroup(groupName string, membersToInclude string) (*WinGetRe
 }
 
 // ExcludeMembersFromGroup exclude members from a local group.
+// ID is an optional identifier.
 // GroupName is required to identify the group.
 // MembersToInclude define the members that should be added to the group. Members should be specified as list of strings, separated by a semi-colon,
 // defining the local machine accounts usernames).
-func ExcludeMembersFromGroup(groupName string, membersToExclude string) (*WinGetResource, error) {
+func ExcludeMembersFromGroup(ID, groupName string, membersToExclude string) (*WinGetResource, error) {
 	r := WinGetResource{}
 	r.Resource = WinGetLocalGroupResource
+
+	// ID (optional)
+	if ID != "" {
+		r.ID = ID
+	}
 
 	// Directives
 	r.Directives.Description = "Exclude members from group"
@@ -82,8 +94,8 @@ func ExcludeMembersFromGroup(groupName string, membersToExclude string) (*WinGet
 // RemoveLocalGroup remove a local group.
 // ID is an optional identifier.
 // GroupName is required to identify the group.
-func RemoveLocalGroup(groupName string) (*WinGetResource, error) {
-	return NewLocalGroupResource("", groupName, "", "", EnsureAbsent)
+func RemoveLocalGroup(ID, groupName string) (*WinGetResource, error) {
+	return NewLocalGroupResource(ID, groupName, "", "", EnsureAbsent)
 }
 
 // NewLocalGroupResource creates a new WinGetResource that contains the settings to manage a local group.
