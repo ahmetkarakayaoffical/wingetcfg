@@ -24,7 +24,7 @@ const (
 // PasswordNeverExpires specify whether the password expires,
 // set this property to true to prevent the account's password from expiring,
 // set this property to $false to have the account's password expire per system security settings
-func AddLocalUser(ID, username string, description string, disabled bool, fullName, password string, passwordChangeNotAllowed, passwordChangeRequired, passwordNeverExpires bool) (*WinGetResource, error) {
+func AddOrModifyLocalUser(ID, username string, description string, disabled bool, fullName, password string, passwordChangeNotAllowed, passwordChangeRequired, passwordNeverExpires bool) (*WinGetResource, error) {
 	return NewLocalUserResource(ID, username, description, disabled, fullName, password, passwordChangeNotAllowed, passwordChangeRequired, passwordNeverExpires, EnsurePresent)
 }
 
