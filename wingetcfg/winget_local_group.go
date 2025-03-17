@@ -43,6 +43,7 @@ func IncludeMembersToGroup(ID, groupName string, membersToInclude string) (*WinG
 	if groupName == "" {
 		return nil, errors.New("groupName cannot be empty")
 	}
+	r.Settings["GroupName"] = groupName
 
 	if membersToInclude == "" {
 		return nil, errors.New("membersToInclude cannot be empty")
@@ -79,6 +80,7 @@ func ExcludeMembersFromGroup(ID, groupName string, membersToExclude string) (*Wi
 	if groupName == "" {
 		return nil, errors.New("groupName cannot be empty")
 	}
+	r.Settings["GroupName"] = groupName
 
 	if membersToExclude == "" {
 		return nil, errors.New("membersToExclude cannot be empty")
@@ -122,6 +124,8 @@ func NewLocalGroupResource(ID, groupName string, description string, members str
 	if groupName == "" {
 		return nil, errors.New("groupName cannot be empty")
 	}
+
+	r.Settings["GroupName"] = groupName
 	r.Settings["Description"] = description
 
 	if members != "" {
