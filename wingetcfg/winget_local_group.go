@@ -2,6 +2,7 @@ package wingetcfg
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -15,8 +16,8 @@ const (
 // Description is an optional text that describes the account.
 // Members define the members the group should have. This property will replace all the current group members with the specified members.
 // Members should be specified as list of strings, separated by a semi-colon, including the local machine accounts usernames).
-func AddOrModifyLocalGroup(ID, groupName string, description string, members string) (*WinGetResource, error) {
-	return NewLocalGroupResource(ID, groupName, description, members, EnsurePresent)
+func AddOrModifyLocalGroup(ID, groupName string, description string, members string, hostname string) (*WinGetResource, error) {
+	return NewLocalGroupResource(ID, groupName, description, members, EnsurePresent, hostname)
 }
 
 // IncludeMembersToGroup adds or modify a local group.
@@ -24,7 +25,7 @@ func AddOrModifyLocalGroup(ID, groupName string, description string, members str
 // GroupName is required to identify the group.
 // MembersToInclude define the members that should be added to the group. Members should be specified as list of strings, separated by a semi-colon,
 // defining the local machine accounts usernames).
-func IncludeMembersToGroup(ID, groupName string, membersToInclude string) (*WinGetResource, error) {
+func IncludeMembersToGroup(ID, groupName string, membersToInclude string, hostname string) (*WinGetResource, error) {
 	r := WinGetResource{}
 	r.Resource = WinGetLocalGroupResource
 
@@ -49,7 +50,7 @@ func IncludeMembersToGroup(ID, groupName string, membersToInclude string) (*WinG
 		return nil, errors.New("membersToInclude cannot be empty")
 	}
 
-	r.Settings["MembersToInclude"] = strings.Split(membersToInclude, ";")
+	r.Settings["MembersToInclude"] = addHostnameToMembersIfRequired(membersToInclude, hostname)
 
 	r.Settings["Ensure"] = EnsurePresent
 
@@ -61,7 +62,7 @@ func IncludeMembersToGroup(ID, groupName string, membersToInclude string) (*WinG
 // GroupName is required to identify the group.
 // MembersToInclude define the members that should be added to the group. Members should be specified as list of strings, separated by a semi-colon,
 // defining the local machine accounts usernames).
-func ExcludeMembersFromGroup(ID, groupName string, membersToExclude string) (*WinGetResource, error) {
+func ExcludeMembersFromGroup(ID, groupName string, membersToExclude string, hostname string) (*WinGetResource, error) {
 	r := WinGetResource{}
 	r.Resource = WinGetLocalGroupResource
 
@@ -86,7 +87,7 @@ func ExcludeMembersFromGroup(ID, groupName string, membersToExclude string) (*Wi
 		return nil, errors.New("membersToExclude cannot be empty")
 	}
 
-	r.Settings["MembersToExclude"] = strings.Split(membersToExclude, ";")
+	r.Settings["MembersToExclude"] = addHostnameToMembersIfRequired(membersToExclude, hostname)
 
 	r.Settings["Ensure"] = EnsurePresent
 
@@ -97,7 +98,7 @@ func ExcludeMembersFromGroup(ID, groupName string, membersToExclude string) (*Wi
 // ID is an optional identifier.
 // GroupName is required to identify the group.
 func RemoveLocalGroup(ID, groupName string) (*WinGetResource, error) {
-	return NewLocalGroupResource(ID, groupName, "", "", EnsureAbsent)
+	return NewLocalGroupResource(ID, groupName, "", "", EnsureAbsent, "")
 }
 
 // NewLocalGroupResource creates a new WinGetResource that contains the settings to manage a local group.
@@ -105,7 +106,7 @@ func RemoveLocalGroup(ID, groupName string) (*WinGetResource, error) {
 // GroupName is required to identify the group.
 // Description is an optional text that describes the group.
 // Reference: https://github.com/dsccommunity/xPSDesiredStateConfiguration/blob/main/source/DSC_xGroupResource/DSC_xGroupResource.psm1
-func NewLocalGroupResource(ID, groupName string, description string, members string, ensure string) (*WinGetResource, error) {
+func NewLocalGroupResource(ID, groupName string, description string, members string, ensure string, hostname string) (*WinGetResource, error) {
 	r := WinGetResource{}
 	r.Resource = WinGetLocalGroupResource
 
@@ -129,10 +130,23 @@ func NewLocalGroupResource(ID, groupName string, description string, members str
 	r.Settings["Description"] = description
 
 	if members != "" {
-		r.Settings["Members"] = strings.Split(members, ";")
+		r.Settings["Members"] = addHostnameToMembersIfRequired(members, hostname)
 	}
 
 	r.Settings["Ensure"] = SetEnsureValue(ensure)
 
 	return &r, nil
+}
+
+func addHostnameToMembersIfRequired(members string, hostname string) []string {
+	processed := []string{}
+	splittedMembers := strings.Split(members, ";")
+	for _, m := range splittedMembers {
+		if !strings.Contains(m, "\\") && !strings.Contains(m, "@") && !strings.Contains(strings.ToLower(m), "dc") {
+			processed = append(processed, fmt.Sprintf("%s\\%s", hostname, m))
+		} else {
+			processed = append(processed, m)
+		}
+	}
+	return processed
 }
