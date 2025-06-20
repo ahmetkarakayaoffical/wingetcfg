@@ -63,7 +63,7 @@ func NewMSIPackageResource(ID string, description string, productID string, path
 	}
 
 	if hashAlgorithm != "" && fileHash != "" {
-		r.Settings["HashAlgorithm"] = fileHash
+		r.Settings["FileHash"] = fileHash
 		r.Settings["HashAlgorithm"] = hashAlgorithm
 	}
 
