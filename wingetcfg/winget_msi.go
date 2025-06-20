@@ -4,7 +4,7 @@ import "errors"
 
 const (
 	FileHashMD5              string = "MD5"
-	FileHasRIPEMD160         string = "RIPEMD160"
+	FileHashRIPEMD160        string = "RIPEMD160"
 	FileHashSHA1             string = "SHA1"
 	FileHashSHA256           string = "SHA256"
 	FileHashSHA384           string = "SHA384"
@@ -51,6 +51,7 @@ func NewMSIPackageResource(ID string, description string, productID string, path
 	if productID == "" {
 		return nil, errors.New("productID cannot be empty")
 	}
+	r.Settings["ProductId"] = productID
 
 	if path == "" {
 		return nil, errors.New("path cannot be empty")
