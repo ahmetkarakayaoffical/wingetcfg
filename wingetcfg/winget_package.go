@@ -42,7 +42,7 @@ func NewWinGetPackageResource(ID string, description string, packageID string, s
 
 	r.Settings["uselatest"] = useLatest
 
-	if version != "" {
+	if version != "" && !useLatest {
 		r.Settings["version"] = version
 		r.Settings["uselatest"] = false
 	}
