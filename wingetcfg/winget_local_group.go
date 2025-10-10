@@ -2,7 +2,6 @@ package wingetcfg
 
 import (
 	"errors"
-	"strings"
 )
 
 const (
@@ -49,7 +48,7 @@ func IncludeMembersToGroup(ID, groupName string, membersToInclude string) (*WinG
 		return nil, errors.New("membersToInclude cannot be empty")
 	}
 
-	r.Settings["MembersToInclude"] = strings.Split(membersToInclude, ";")
+	r.Settings["MembersToInclude"] = membersToInclude
 
 	r.Settings["Ensure"] = EnsurePresent
 
@@ -86,7 +85,7 @@ func ExcludeMembersFromGroup(ID, groupName string, membersToExclude string) (*Wi
 		return nil, errors.New("membersToExclude cannot be empty")
 	}
 
-	r.Settings["MembersToExclude"] = strings.Split(membersToExclude, ";")
+	r.Settings["MembersToExclude"] = membersToExclude
 
 	r.Settings["Ensure"] = EnsurePresent
 
@@ -129,7 +128,7 @@ func NewLocalGroupResource(ID, groupName string, description string, members str
 	r.Settings["Description"] = description
 
 	if members != "" {
-		r.Settings["Members"] = strings.Split(members, ";")
+		r.Settings["Members"] = members
 	}
 
 	r.Settings["Ensure"] = SetEnsureValue(ensure)
