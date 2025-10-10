@@ -2,6 +2,7 @@ package wingetcfg
 
 import (
 	"errors"
+	"strings"
 )
 
 const (
@@ -20,7 +21,7 @@ const (
 // Key specifies the path to the registry key as a string. This path must include the registry hive or drive, such as HKEY_LOCAL_MACHINE or HKLM:.
 // force specifies if you want to delete a registry key that has subkeys.
 func AddRegistryKey(ID string, description string, key string) (*WinGetResource, error) {
-	return NewWinGetRegistryResource(ID, description, key, "", "", []string{""}, EnsurePresent, false, false)
+	return NewWinGetRegistryResource(ID, description, key, "", "", "", EnsurePresent, false, false)
 }
 
 // AddRegistryKeyDefaultValue updates a registry key default value.
@@ -30,7 +31,7 @@ func AddRegistryKey(ID string, description string, key string) (*WinGetResource,
 // valueType specifies the type for the specified registry key value's data which is one of String, Binary, DWord, QWord, MultiString, ExpandString
 // valueData specifies the registry key value as an array of string. If ValueType isn't MultiString and this property's value is multiple strings,
 // force specifies if you want to delete a registry key that has subkeys.
-func UpdateRegistryKeyDefaultValue(ID string, description string, key string, valueType string, valueData []string, force bool) (*WinGetResource, error) {
+func UpdateRegistryKeyDefaultValue(ID string, description string, key string, valueType string, valueData string, force bool) (*WinGetResource, error) {
 	return NewWinGetRegistryResource(ID, description, key, "", valueType, valueData, EnsurePresent, false, force)
 }
 
@@ -45,7 +46,7 @@ func UpdateRegistryKeyDefaultValue(ID string, description string, key string, va
 // hex specifies whether the specified registry key data is provided in a hexadecimal format. Specify this property only when valueType is DWord or QWord.
 // If valueType isn't DWord or Qword, the resource ignores this property.
 // force specifies if you want to delete a registry key that has subkeys.
-func AddRegistryValue(ID string, description string, key string, valueName string, valueType string, valueData []string, hex bool, force bool) (*WinGetResource, error) {
+func AddRegistryValue(ID string, description string, key string, valueName string, valueType string, valueData string, hex bool, force bool) (*WinGetResource, error) {
 	return NewWinGetRegistryResource(ID, description, key, valueName, valueType, valueData, EnsurePresent, false, force)
 }
 
@@ -55,7 +56,7 @@ func AddRegistryValue(ID string, description string, key string, valueName strin
 // Key specifies the path to the registry key as a string. This path must include the registry hive or drive, such as HKEY_LOCAL_MACHINE or HKLM:.
 // force specifies if you want to delete a registry key that has subkeys.
 func RemoveRegistryKey(ID string, description string, key string, force bool) (*WinGetResource, error) {
-	return NewWinGetRegistryResource(ID, description, key, "", "", []string{""}, EnsureAbsent, false, force)
+	return NewWinGetRegistryResource(ID, description, key, "", "", "", EnsureAbsent, false, force)
 }
 
 // RemoveRegistryValue removes a registry value from a key.
@@ -64,7 +65,7 @@ func RemoveRegistryKey(ID string, description string, key string, force bool) (*
 // Key specifies the path to the registry key as a string. This path must include the registry hive or drive, such as HKEY_LOCAL_MACHINE or HKLM:.
 // valueName specifies the name of the registry value as a string.
 func RemoveRegistryValue(ID string, description string, key string, valueName string) (*WinGetResource, error) {
-	return NewWinGetRegistryResource(ID, description, key, valueName, "", []string{""}, EnsureAbsent, false, false)
+	return NewWinGetRegistryResource(ID, description, key, valueName, "", "", EnsureAbsent, false, false)
 }
 
 // NewWinGetRegistryResource creates a new WinGetResource that contains the settings to modify the registry.
@@ -83,7 +84,7 @@ func RemoveRegistryValue(ID string, description string, key string, valueName st
 // If valueType isn't DWord or Qword, the resource ignores this property.
 // force specifies whether to overwrite the registry key value if it already has a value or to delete a registry key that has subkeys.
 // Reference: https://github.com/dsccommunity/xPSDesiredStateConfiguration/blob/main/source/DSCResources/DSC_xRegistryResource/DSC_xRegistryResource.psm1
-func NewWinGetRegistryResource(ID string, description string, key string, valueName string, valueType string, valueData []string, ensure string, hex bool, force bool) (*WinGetResource, error) {
+func NewWinGetRegistryResource(ID string, description string, key string, valueName string, valueType string, valueData string, ensure string, hex bool, force bool) (*WinGetResource, error) {
 	r := WinGetResource{}
 	r.Resource = WinGetRegistryResource
 
@@ -120,12 +121,13 @@ func NewWinGetRegistryResource(ID string, description string, key string, valueN
 	if valueType == RegistryValueTypeMultistring {
 		r.Settings["ValueData"] = valueData
 	} else {
-		if len(valueData) > 1 {
+		data := strings.Split(valueData, "\n")
+		if len(data) > 1 {
 			return nil, errors.New("more than one string has been passed but type is not Multitring")
 		}
 
-		if valueData[0] != "" {
-			r.Settings["ValueData"] = valueData[0]
+		if valueData != "" {
+			r.Settings["ValueData"] = valueData
 		}
 	}
 

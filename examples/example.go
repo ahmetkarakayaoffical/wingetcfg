@@ -42,7 +42,7 @@ func main() {
 
 	cfg3 := wingetcfg.NewWingetCfg()
 
-	editRegistry, err := wingetcfg.AddRegistryValue("", "add registry value to existing value", `HKEY_USERS\.DEFAULT\Control Panel\Keyboard`, "InitialKeyboardIndicators", wingetcfg.RegistryValueTypeString, []string{"2147483650"}, false, true)
+	editRegistry, err := wingetcfg.AddRegistryValue("", "add registry value to existing value", `HKEY_USERS\.DEFAULT\Control Panel\Keyboard`, "InitialKeyboardIndicators", wingetcfg.RegistryValueTypeString, "2147483650", false, true)
 	if err != nil {
 		log.Fatalf("could not create package resource: %v", err)
 	}
