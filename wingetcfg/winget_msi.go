@@ -48,10 +48,10 @@ func NewMSIPackageResource(ID string, description string, productID string, path
 	// Settings
 	r.Settings = map[string]any{}
 
-	if productID == "" {
-		return nil, errors.New("productID cannot be empty")
-	}
-	r.Settings["ProductId"] = productID
+	// if productID == "" {
+	// 	return nil, errors.New("productID cannot be empty")
+	// }
+	// r.Settings["ProductId"] = productID
 
 	if path == "" {
 		return nil, errors.New("path cannot be empty")
@@ -62,10 +62,10 @@ func NewMSIPackageResource(ID string, description string, productID string, path
 		r.Settings["Arguments"] = arguments
 	}
 
-	if hashAlgorithm != "" && fileHash != "" {
-		r.Settings["FileHash"] = fileHash
-		r.Settings["HashAlgorithm"] = hashAlgorithm
-	}
+	// if hashAlgorithm != "" && fileHash != "" {
+	// 	r.Settings["FileHash"] = fileHash
+	// 	r.Settings["HashAlgorithm"] = hashAlgorithm
+	// }
 
 	if logPath != "" {
 		r.Settings["LogPath"] = logPath
