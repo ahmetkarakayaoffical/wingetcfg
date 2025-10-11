@@ -47,7 +47,7 @@ func UpdateRegistryKeyDefaultValue(ID string, description string, key string, va
 // If valueType isn't DWord or Qword, the resource ignores this property.
 // force specifies if you want to delete a registry key that has subkeys.
 func AddRegistryValue(ID string, description string, key string, valueName string, valueType string, valueData string, hex bool, force bool) (*WinGetResource, error) {
-	return NewWinGetRegistryResource(ID, description, key, valueName, valueType, valueData, EnsurePresent, false, force)
+	return NewWinGetRegistryResource(ID, description, key, valueName, valueType, valueData, EnsurePresent, hex, force)
 }
 
 // RemoveRegistryKey removes a registry key.
