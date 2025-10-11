@@ -114,21 +114,13 @@ func NewWinGetRegistryResource(ID string, description string, key string, valueN
 		r.Settings["ValueType"] = valueType
 	}
 
-	if len(valueData) == 0 {
-		return nil, errors.New("valueData is empty")
-	}
-
-	if valueType == RegistryValueTypeMultistring {
-		r.Settings["ValueData"] = valueData
-	} else {
+	if valueData != "" {
 		data := strings.Split(valueData, "\n")
 		if len(data) > 1 {
 			return nil, errors.New("more than one string has been passed but type is not Multitring")
 		}
 
-		if valueData != "" {
-			r.Settings["ValueData"] = valueData
-		}
+		r.Settings["ValueData"] = valueData
 	}
 
 	if force {
