@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/open-uem/wingetcfg/wingetcfg"
+	"github.com/ahmetkarakayaoffical/wingetcfg/wingetcfg"
 )
 
 func main() {
